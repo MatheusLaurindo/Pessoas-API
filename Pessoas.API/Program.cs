@@ -28,19 +28,16 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IHttpContextAcessorService, HttpContextAcessorService>();
 
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Pessoas.API",
-        Description = "API para gerenciamento de pessoas e autenticação JWT.",
-    });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Pessoas.API V1", Version = "v1", Description = "API para gerenciamento de pessoas e autenticação JWT." });
+    options.SwaggerDoc("v2", new OpenApiInfo { Title = "Pessoas.API V2", Version = "v2", Description = "Gerenciamento de cadastro e pessoas." });
 
-    // Habilita comentários XML para documentação
+    options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
+    options.IncludeXmlComments(xmlPath);
 });
 
 // Configuração do JWT
@@ -99,7 +96,8 @@ app.UseSwagger();
 
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Pessoas.API v1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Pessoas API V1");
+    options.SwaggerEndpoint("/swagger/v2/swagger.json", "Pessoas API V2");
     options.DocumentTitle = "Pessoas.API Docs";
 });
 
