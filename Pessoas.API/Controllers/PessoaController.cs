@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pessoas.API.Atributos;
 using Pessoas.API.DTOs.Request;
+using Pessoas.API.Enuns;
 using Pessoas.API.Infra;
 using Pessoas.API.Services.Interfaces;
 using System.Net.Mime;
@@ -10,17 +13,18 @@ namespace Pessoas.API.Controllers;
 /// <summary>
 /// Gerencia operações relacionadas a pessoas.
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-public class PessoaController(IPessoaService service, AppDbContext contexto) : ControllerBase
+public class PessoaController(IPessoaService service) : ControllerBase
 {
     private readonly IPessoaService _service = service;
-    private readonly AppDbContext _contexto = contexto;
 
     /// <summary>
     /// Retorna todas as pessoas.
     /// </summary>
+    [AppAuthorize(Permissao.Visualizar_Pessoa)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllAsync()
@@ -35,6 +39,7 @@ public class PessoaController(IPessoaService service, AppDbContext contexto) : C
     /// </summary>
     /// <param name="pagina">Número da página.</param>
     /// <param name="linhasPorPagina">Quantidade de registros por página.</param>
+    [AppAuthorize(Permissao.Visualizar_Pessoa)]
     [HttpGet("paginado")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPaginatedAsync(int pagina = 1, int linhasPorPagina = 10)
@@ -48,6 +53,7 @@ public class PessoaController(IPessoaService service, AppDbContext contexto) : C
     /// Retorna uma pessoa pelo ID.
     /// </summary>
     /// <param name="id">ID da pessoa.</param>
+    [AppAuthorize(Permissao.Visualizar_Pessoa)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -65,6 +71,7 @@ public class PessoaController(IPessoaService service, AppDbContext contexto) : C
     /// Adiciona uma nova pessoa.
     /// </summary>
     /// <param name="request">Dados da nova pessoa.</param>
+    [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -89,6 +96,7 @@ public class PessoaController(IPessoaService service, AppDbContext contexto) : C
     /// Atualiza uma pessoa existente.
     /// </summary>
     /// <param name="request">Dados atualizados da pessoa.</param>
+    [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -119,6 +127,7 @@ public class PessoaController(IPessoaService service, AppDbContext contexto) : C
     /// Remove uma pessoa pelo ID.
     /// </summary>
     /// <param name="id">ID da pessoa a ser removida.</param>
+    [AppAuthorize(Permissao.Remover_Pessoa)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
