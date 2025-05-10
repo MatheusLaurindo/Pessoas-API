@@ -10,5 +10,6 @@
         public string Sexo { get; init; }
         public string Nacionalidade { get; init; }
         public string Naturalidade { get; init; }
+        public string Endereco { get; init; }
     }
 }
