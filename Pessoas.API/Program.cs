@@ -4,6 +4,7 @@ using Pessoas.API.Repositories;
 using Pessoas.API.Repositories.Interfaces;
 using Pessoas.API.Services;
 using Pessoas.API.Services.Interfaces;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +18,11 @@ builder.Services.AddDbContext<AppDbContext>(x => x.UseInMemoryDatabase("InMemory
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
 builder.Services.AddScoped<IPessoaService, PessoaService>();
 
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc("v1", new() { Title = "Pessoas.API", Version = "v1" });
-    options.SwaggerDoc("v2", new() { Title = "Pessoas.API", Version = "v2" });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();
