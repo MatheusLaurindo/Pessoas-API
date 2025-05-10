@@ -103,7 +103,7 @@ public class PessoaControllerV2 : PessoaBaseController
     /// <summary>
     /// Adiciona uma nova pessoa. (V2)
     /// </summary>
-    /// <param name="request">Dados da nova pessoa.</param>
+    /// <param name="request">Dados da nova pessoa. O campo <c>Endereço</c> é obrigatório.</param>
     [HttpPost]
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequestV2 request)
     {
@@ -134,9 +134,9 @@ public class PessoaControllerV2 : PessoaBaseController
     }
 
     /// <summary>
-    /// Atualiza uma pessoa existente.
+    /// Atualiza uma pessoa existente. (V2)
     /// </summary>
-    /// <param name="request">Dados atualizados da pessoa.</param>
+    /// <param name="request">Dados atualizados da pessoa. O campo <c>Endereço</c> é obrigatório.</param>
     [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
