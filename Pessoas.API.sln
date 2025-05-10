@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pessoas.API", "Pessoas.API\Pessoas.API.csproj", "{4963D332-2E43-44C9-B73A-C351A1E2A70D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pessoas.Tests", "Pessoas.Tests\Pessoas.Tests.csproj", "{411A5178-9B6A-4698-A80C-81D065E82EA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4963D332-2E43-44C9-B73A-C351A1E2A70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4963D332-2E43-44C9-B73A-C351A1E2A70D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4963D332-2E43-44C9-B73A-C351A1E2A70D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{411A5178-9B6A-4698-A80C-81D065E82EA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{411A5178-9B6A-4698-A80C-81D065E82EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{411A5178-9B6A-4698-A80C-81D065E82EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{411A5178-9B6A-4698-A80C-81D065E82EA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

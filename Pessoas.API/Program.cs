@@ -1,99 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Pessoas.API.Infra;
-using Pessoas.API.Repositories;
-using Pessoas.API.Repositories.Interfaces;
-using Pessoas.API.Services;
-using Pessoas.API.Services.Interfaces;
-using System.Reflection;
-using System.Text;
+﻿using Pessoas.API.Infra;
+using Pessoas.API.Infra.Extensoes;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(x => x.UseInMemoryDatabase("InMemoryDatabase"));
-
-builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
-builder.Services.AddScoped<IPessoaService, PessoaService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IHttpContextAcessorService, HttpContextAcessorService>();
-
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Pessoas.API V1", Version = "v1", Description = "API para gerenciamento de pessoas e autenticação JWT." });
-    options.SwaggerDoc("v2", new OpenApiInfo { Title = "Pessoas.API V2", Version = "v2", Description = "Gerenciamento de cadastro e pessoas." });
-
-    options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    options.IncludeXmlComments(xmlPath);
-});
-
-// Configuração do JWT
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JWT:ISSUER"],
-        ValidAudience = builder.Configuration["JWT:AUDIENCE"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:KEY"])),
-        ClockSkew = TimeSpan.Zero
-    };
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var token = context.Request.Cookies["jwt_token"];
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                context.Token = token;
-            }
-
-            return Task.CompletedTask;
-        }
-    };
-});
-
-builder.Services.AddAuthorization();
-
-// Configuração de CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod()
-                   .AllowCredentials();
-        });
-});
+// Instalar serviços via padrão Installer
+builder.Services.InstallServicesFromAssembly(builder.Configuration);
 
 var app = builder.Build();
 
 app.UseSwagger();
-
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Pessoas API V1");
@@ -110,10 +30,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

@@ -6,82 +6,82 @@ namespace Pessoas.API.DTOs.Request
     public sealed record AdicionarPessoaRequest
     {
         [Required]
-        public string Nome { get; set; }
+        public string Nome { get; init; } = null;
 
         [Required]
-        public DateTime DataNascimento { get; set; }
+        public DateTime DataNascimento { get; init; }
 
         [Required]
-        public string Cpf { get; set; }
+        public string Cpf { get; init; } = null;
 
-        public string Email { get; set; }
-        public string Endereco { get; set; }
-        public Sexo? Sexo { get; set; }
-        public Nacionalidade? Nacionalidade { get; set; }
-        public string Naturalidade { get; set; }
+        public string Email { get; init; } = null;
+        public string Endereco { get; init; } = null;
+        public Sexo? Sexo { get; init; } = null;
+        public Nacionalidade? Nacionalidade { get; init; } = null;
+        public string Naturalidade { get; init; } = null;
     }
 
     public sealed record AdicionarPessoaRequestV2
     {
         [Required]
-        public string Nome { get; set; }
+        public string Nome { get; init; } = null;
 
         [Required]
-        public DateTime DataNascimento { get; set; }
+        public DateTime DataNascimento { get; init; }
 
         [Required]
-        public string Cpf { get; set; }
+        public string Cpf { get; init; } = null;
 
         [Required(ErrorMessage = "O parametro 'Endereço' é obrigatório")]
-        public string Endereco { get; set; }
+        public string Endereco { get; init; } = null;
 
-        public string Email { get; set; }
-        public Sexo? Sexo { get; set; }
-        public Nacionalidade? Nacionalidade { get; set; }
-        public string Naturalidade { get; set; }
+        public string Email { get; init; } = null;
+        public Sexo? Sexo { get; init; } = null;
+        public Nacionalidade? Nacionalidade { get; init; } = null;
+        public string Naturalidade { get; init; } = null;
     }
 
     public sealed record EditarPessoaRequest
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; } = Guid.Empty;
 
         [Required]
-        public string Nome { get; set; }
+        public string Nome { get; init; } = null;
 
         [Required]
-        public DateTime DataNascimento { get; set; }
+        public DateTime DataNascimento { get; init; }
 
         [Required]
-        public string Cpf { get; set; }
+        public string Cpf { get; init; } = null;
 
-        public string Email { get; set; }
-        public string Endereco { get; set; }
-        public Sexo? Sexo { get; set; }
-        public Nacionalidade? Nacionalidade { get; set; }
-        public string Naturalidade { get; set; }
+        public string Email { get; init; } = null;
+        public string Endereco { get; init; } = null;
+        public Sexo? Sexo { get; init; } = null;
+        public Nacionalidade? Nacionalidade { get; init; } = null;
+        public string Naturalidade { get; init; } = null;
     }
 
     public sealed record EditarPessoaRequestV2
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; } = Guid.Empty;
 
         [Required]
-        public string Nome { get; set; }
+        public string Nome { get; init; } = null;
 
         [Required]
-        public DateTime DataNascimento { get; set; }
+        public DateTime DataNascimento { get; init; }
 
         [Required]
-        public string Cpf { get; set; }
+        public string Cpf { get; init; } = null;
 
         [Required(ErrorMessage = "O parametro 'Endereço' é obrigatório")]
-        public string Endereco { get; set; }
+        public string Endereco { get; init; } = null;
 
-        public string Email { get; set; }
-        public Sexo? Sexo { get; set; }
-        public Nacionalidade? Nacionalidade { get; set; }
-        public string Naturalidade { get; set; }
+        public string Email { get; init; } = null;
+        public Sexo? Sexo { get; init; } = null;
+        public Nacionalidade? Nacionalidade { get; init; } = null;
+        public string Naturalidade { get; init; } = null;
     }
 }

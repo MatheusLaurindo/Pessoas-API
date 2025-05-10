@@ -15,7 +15,8 @@ namespace Pessoas.API.Extensoes
                 Cpf = p.Cpf,
                 Sexo = p.Sexo.ToString(),
                 Nacionalidade = p.Nacionalidade.ToString(),
-                Naturalidade = p.Naturalidade
+                Naturalidade = p.Naturalidade,
+                Endereco = p.Endereco
             };
     }
 }
