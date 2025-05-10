@@ -11,10 +11,14 @@ namespace Pessoas.API.Infra
         }
 
         public DbSet<Pessoa> Pessoas { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<UsuarioPermissao> UsuariosPermissoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new PessoaMapping());
+            modelBuilder.ApplyConfiguration(new UsuarioMapping());
+            modelBuilder.ApplyConfiguration(new UsuarioPermissaoMapping());
 
             base.OnModelCreating(modelBuilder);
         }

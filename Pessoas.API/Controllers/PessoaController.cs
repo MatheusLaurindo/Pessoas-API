@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Pessoas.API.Atributos;
 using Pessoas.API.DTOs.Request;
+using Pessoas.API.Enuns;
+using Pessoas.API.Infra;
 using Pessoas.API.Services.Interfaces;
 using System.Net.Mime;
 
@@ -8,6 +13,7 @@ namespace Pessoas.API.Controllers;
 /// <summary>
 /// Gerencia operações relacionadas a pessoas.
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
@@ -18,11 +24,13 @@ public class PessoaController(IPessoaService service) : ControllerBase
     /// <summary>
     /// Retorna todas as pessoas.
     /// </summary>
+    [AppAuthorize(Permissao.Visualizar_Pessoa)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllAsync()
     {
         var pessoas = await _service.GetAllAsync();
+
         return Ok(pessoas);
     }
 
@@ -31,11 +39,13 @@ public class PessoaController(IPessoaService service) : ControllerBase
     /// </summary>
     /// <param name="pagina">Número da página.</param>
     /// <param name="linhasPorPagina">Quantidade de registros por página.</param>
+    [AppAuthorize(Permissao.Visualizar_Pessoa)]
     [HttpGet("paginado")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPaginatedAsync(int pagina = 1, int linhasPorPagina = 10)
     {
         var pessoas = await _service.GetAllPaginatedAsync(pagina, linhasPorPagina);
+
         return Ok(pessoas);
     }
 
@@ -43,19 +53,25 @@ public class PessoaController(IPessoaService service) : ControllerBase
     /// Retorna uma pessoa pelo ID.
     /// </summary>
     /// <param name="id">ID da pessoa.</param>
+    [AppAuthorize(Permissao.Visualizar_Pessoa)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var pessoa = await _service.GetByIdAsync(id);
-        return pessoa is null ? NotFound() : Ok(pessoa);
+
+        if (pessoa == null)
+            return NotFound("Pessoa não encontrada.");
+
+        return Ok(pessoa);
     }
 
     /// <summary>
     /// Adiciona uma nova pessoa.
     /// </summary>
     /// <param name="request">Dados da nova pessoa.</param>
+    [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -66,6 +82,13 @@ public class PessoaController(IPessoaService service) : ControllerBase
             return BadRequest(ModelState);
 
         var result = await _service.AddAsync(request);
+
+        if (!result.FoiSucesso)
+        {
+            ModelState.AddModelError("", result.Mensagem);
+            return BadRequest(result.Mensagem);
+        }
+
         return Ok(result);
     }
 
@@ -73,6 +96,7 @@ public class PessoaController(IPessoaService service) : ControllerBase
     /// Atualiza uma pessoa existente.
     /// </summary>
     /// <param name="request">Dados atualizados da pessoa.</param>
+    [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -84,10 +108,18 @@ public class PessoaController(IPessoaService service) : ControllerBase
             return BadRequest(ModelState);
 
         var pessoa = await _service.GetByIdAsync(request.Id);
+
         if (pessoa == null)
             return NotFound("Pessoa não encontrada.");
 
         var result = await _service.UpdateAsync(request);
+
+        if (!result.FoiSucesso)
+        {
+            ModelState.AddModelError("", result.Mensagem);
+            return BadRequest(result.Mensagem);
+        }
+
         return Ok(result);
     }
 
@@ -95,6 +127,7 @@ public class PessoaController(IPessoaService service) : ControllerBase
     /// Remove uma pessoa pelo ID.
     /// </summary>
     /// <param name="id">ID da pessoa a ser removida.</param>
+    [AppAuthorize(Permissao.Remover_Pessoa)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -102,10 +135,18 @@ public class PessoaController(IPessoaService service) : ControllerBase
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
         var pessoa = await _service.GetByIdAsync(id);
+
         if (pessoa == null)
             return NotFound("Pessoa não encontrada.");
 
         var result = await _service.DeleteAsync(id);
-        return result ? Ok("Pessoa deletada com sucesso.") : BadRequest("Erro ao deletar a pessoa.");
+
+        if (!result.FoiSucesso)
+        {
+            ModelState.AddModelError("", result.Mensagem);
+            return BadRequest(result.Mensagem);
+        }
+
+        return Ok(result);
     }
 }

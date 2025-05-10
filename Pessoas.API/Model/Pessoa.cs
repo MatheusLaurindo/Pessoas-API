@@ -1,4 +1,5 @@
-﻿using Pessoas.API.Enuns;
+﻿using Pessoas.API.Common;
+using Pessoas.API.Enuns;
 using Pessoas.API.Exceptions;
 using Pessoas.API.Model.Base;
 using System.Text.RegularExpressions;
@@ -104,7 +105,7 @@ namespace Pessoas.API.Model
             Naturalidade = naturalidade;
         }
 
-        public static Pessoa Create(
+        public static Result<Pessoa> Create(
             string nome, 
             string email, 
             DateTime dataNascimento, 
@@ -114,7 +115,7 @@ namespace Pessoas.API.Model
             string naturalidade, 
             string endereco)
         {
-            return new Pessoa(nome, email, dataNascimento, cpf, sexo, nacionalidade, naturalidade, endereco);
+            return Result<Pessoa>.Sucesso(new Pessoa(nome, email, dataNascimento, cpf, sexo, nacionalidade, naturalidade, endereco));
         }
     }
 }

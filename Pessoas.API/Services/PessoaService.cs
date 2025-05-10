@@ -1,5 +1,8 @@
-﻿using Pessoas.API.DTOs.Request;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Pessoas.API.Common;
+using Pessoas.API.DTOs.Request;
 using Pessoas.API.DTOs.Response;
+using Pessoas.API.Exceptions;
 using Pessoas.API.Extensoes;
 using Pessoas.API.Model;
 using Pessoas.API.Repositories.Interfaces;
@@ -35,38 +38,41 @@ namespace Pessoas.API.Services
             return pessoa.ToDto();
         }
 
-        public async Task<GetPessoaResp> AddAsync(AdicionarPessoaRequest pessoa)
+        public async Task<Result<Pessoa>> AddAsync(AdicionarPessoaRequest pessoa)
         {
             try
             {
                 var novaPessoa = Pessoa.Create(
-                pessoa.Nome,
-                pessoa.Email,
-                pessoa.DataNascimento,
-                pessoa.Cpf,
-                pessoa.Sexo,
-                pessoa.Nacionalidade,
-                pessoa.Naturalidade,
-                pessoa.Endereco);
+                    pessoa.Nome,
+                    pessoa.Email,
+                    pessoa.DataNascimento,
+                    pessoa.Cpf,
+                    pessoa.Sexo,
+                    pessoa.Nacionalidade,
+                    pessoa.Naturalidade,
+                    pessoa.Endereco);
 
-                var result = await _repository.AddAsync(novaPessoa);
+                if (!novaPessoa.FoiSucesso)
+                    return Result<Pessoa>.Falha(novaPessoa.Mensagem);
 
-                return result.ToDto();
+                var result = await _repository.AddAsync(novaPessoa.Valor);
+
+                return Result<Pessoa>.Sucesso(result);
             }
-            catch (Exception)
+            catch (DominioInvalidoException ex)
             {
-                return null;
+                return Result<Pessoa>.Falha($"Erro ao adicionar dados: {ex.Message}");
             }
         }
 
-        public async Task<GetPessoaResp> UpdateAsync(EditarPessoaRequest pessoa)
+        public async Task<Result<Pessoa>> UpdateAsync(EditarPessoaRequest pessoa)
         {
             try
             {
                 var pessoaExistente = await _repository.GetByIdAsync(pessoa.Id);
 
                 if (pessoaExistente == null)
-                    return null;
+                    return Result<Pessoa>.Falha("Pessoa não encontrada");
 
                 pessoaExistente.SetNome(pessoa.Nome);
                 pessoaExistente.SetEmail(pessoa.Email);
@@ -79,28 +85,30 @@ namespace Pessoas.API.Services
 
                 var result = await _repository.UpdateAsync(pessoaExistente);
 
-                return result.ToDto();
+                return Result<Pessoa>.Sucesso(result);
             }
-            catch (Exception)
+            catch (DominioInvalidoException ex)
             {
-                return null;
+                return Result<Pessoa>.Falha($"Erro ao editar dados: {ex.Message}");
             }
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<Result<Guid>> DeleteAsync(Guid id)
         {
             try
             {
                 var pessoaExistente = await _repository.GetByIdAsync(id);
 
                 if (pessoaExistente == null)
-                    return false;
+                    return Result<Guid>.Falha("Pessoa não encontrada");
 
-                return await _repository.DeleteAsync(id);
+                await _repository.DeleteAsync(id);
+
+                return Result<Guid>.Sucesso(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Result<Guid>.Falha($"Erro ao remover pessoa: {ex.Message}");
             }
         }
     }

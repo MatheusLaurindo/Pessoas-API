@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Pessoas.API.Common;
 using Pessoas.API.Infra;
 using Pessoas.API.Model;
 using Pessoas.API.Repositories.Interfaces;
