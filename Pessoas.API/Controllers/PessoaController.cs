@@ -1,70 +1,28 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Pessoas.API.Atributos;
 using Pessoas.API.DTOs.Request;
 using Pessoas.API.Enuns;
-using Pessoas.API.Infra;
 using Pessoas.API.Services.Interfaces;
 using System.Net.Mime;
 
 namespace Pessoas.API.Controllers;
 
-/// <summary>
-/// Gerencia operações relacionadas a pessoas.
-/// </summary>
+/// <summary>  
+/// Gerencia operações relacionadas a pessoas.  
+/// </summary>  
 [Authorize]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/pessoa")]
+[ApiExplorerSettings(GroupName = "v1")]
 [Produces(MediaTypeNames.Application.Json)]
-public class PessoaController(IPessoaService service) : ControllerBase
+public class PessoaController : PessoaBaseController
 {
-    private readonly IPessoaService _service = service;
+    private readonly IPessoaService _service;
 
-    /// <summary>
-    /// Retorna todas as pessoas.
-    /// </summary>
-    [AppAuthorize(Permissao.Visualizar_Pessoa)]
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAllAsync()
+    public PessoaController(IPessoaService service) : base(service)
     {
-        var pessoas = await _service.GetAllAsync();
-
-        return Ok(pessoas);
-    }
-
-    /// <summary>
-    /// Retorna pessoas de forma paginada.
-    /// </summary>
-    /// <param name="pagina">Número da página.</param>
-    /// <param name="linhasPorPagina">Quantidade de registros por página.</param>
-    [AppAuthorize(Permissao.Visualizar_Pessoa)]
-    [HttpGet("paginado")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetPaginatedAsync(int pagina = 1, int linhasPorPagina = 10)
-    {
-        var pessoas = await _service.GetAllPaginatedAsync(pagina, linhasPorPagina);
-
-        return Ok(pessoas);
-    }
-
-    /// <summary>
-    /// Retorna uma pessoa pelo ID.
-    /// </summary>
-    /// <param name="id">ID da pessoa.</param>
-    [AppAuthorize(Permissao.Visualizar_Pessoa)]
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByIdAsync(Guid id)
-    {
-        var pessoa = await _service.GetByIdAsync(id);
-
-        if (pessoa == null)
-            return NotFound("Pessoa não encontrada.");
-
-        return Ok(pessoa);
+        _service = service;
     }
 
     /// <summary>
@@ -122,24 +80,92 @@ public class PessoaController(IPessoaService service) : ControllerBase
 
         return Ok(result);
     }
+}
+
+/// <summary>  
+/// Gerencia operações relacionadas a pessoas. (V2)
+/// </summary>  
+[Authorize]
+[ApiController]
+[Route("api/v2/pessoa")]
+[ApiExplorerSettings(GroupName = "v2")]
+[Produces(MediaTypeNames.Application.Json)]
+public class PessoaControllerV2 : PessoaBaseController
+{
+    private readonly IPessoaService _service;
+
+    public PessoaControllerV2(IPessoaService service) : base(service)
+    {
+        _service = service;
+    }
+
 
     /// <summary>
-    /// Remove uma pessoa pelo ID.
+    /// Adiciona uma nova pessoa. (V2)
     /// </summary>
-    /// <param name="id">ID da pessoa a ser removida.</param>
-    [AppAuthorize(Permissao.Remover_Pessoa)]
-    [HttpDelete("{id:guid}")]
+    /// <param name="request">Dados da nova pessoa.</param>
+    [HttpPost]
+    public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequestV2 request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var v1Request = new AdicionarPessoaRequest
+        {
+            Nome = request.Nome,
+            DataNascimento = request.DataNascimento,
+            Cpf = request.Cpf,
+            Email = request.Email,
+            Endereco = request.Endereco,
+            Sexo = request.Sexo,
+            Nacionalidade = request.Nacionalidade,
+            Naturalidade = request.Naturalidade
+        };
+
+        var result = await _service.AddAsync(v1Request);
+
+        if (!result.FoiSucesso)
+        {
+            ModelState.AddModelError("", result.Mensagem);
+            return BadRequest(result.Mensagem);
+        }
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Atualiza uma pessoa existente.
+    /// </summary>
+    /// <param name="request">Dados atualizados da pessoa.</param>
+    [AppAuthorize(Permissao.Editar_Pessoa)]
+    [HttpPut]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteAsync(Guid id)
+    public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequestV2 request)
     {
-        var pessoa = await _service.GetByIdAsync(id);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var pessoa = await _service.GetByIdAsync(request.Id);
 
         if (pessoa == null)
             return NotFound("Pessoa não encontrada.");
 
-        var result = await _service.DeleteAsync(id);
+        var v1Request = new EditarPessoaRequest
+        {
+            Nome = request.Nome,
+            DataNascimento = request.DataNascimento,
+            Cpf = request.Cpf,
+            Email = request.Email,
+            Endereco = request.Endereco,
+            Sexo = request.Sexo,
+            Nacionalidade = request.Nacionalidade,
+            Naturalidade = request.Naturalidade
+        };
+
+        var result = await _service.UpdateAsync(v1Request);
 
         if (!result.FoiSucesso)
         {
