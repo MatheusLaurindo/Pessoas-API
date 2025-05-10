@@ -20,7 +20,7 @@ namespace Pessoas.API.Infra.Mapping
                 .IsUnique();
 
             builder.Property(p => p.Cpf)
-                .HasMaxLength(15)
+                .HasMaxLength(14)
                 .IsRequired();
 
             builder.Property(p => p.Email)

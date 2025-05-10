@@ -2,6 +2,8 @@
 using Pessoas.API.Infra;
 using Pessoas.API.Repositories;
 using Pessoas.API.Repositories.Interfaces;
+using Pessoas.API.Services;
+using Pessoas.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(x => x.UseInMemoryDatabase("InMemoryDatabase"));
 
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
+builder.Services.AddScoped<IPessoaService, PessoaService>();
 
 builder.Services.AddSwaggerGen(options =>
 {

@@ -74,7 +74,7 @@ namespace Pessoas.API.Model
             if (string.IsNullOrWhiteSpace(cpf))
                 throw new DominioInvalidoException(nameof(cpf));
 
-            if (cpf.Length < 15)
+            if (cpf.Length < 14)
                 throw new DominioInvalidoException(nameof(cpf));
 
             Cpf = cpf;
@@ -102,6 +102,19 @@ namespace Pessoas.API.Model
         public void SetNaturalidade(string naturalidade)
         {
             Naturalidade = naturalidade;
+        }
+
+        public static Pessoa Create(
+            string nome, 
+            string email, 
+            DateTime dataNascimento, 
+            string cpf, 
+            Sexo? sexo, 
+            Nacionalidade? nacionalidade, 
+            string naturalidade, 
+            string endereco)
+        {
+            return new Pessoa(nome, email, dataNascimento, cpf, sexo, nacionalidade, naturalidade, endereco);
         }
     }
 }
