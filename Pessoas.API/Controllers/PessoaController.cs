@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pessoas.API.Atributos;
+using Pessoas.API.Common;
 using Pessoas.API.DTOs.Request;
 using Pessoas.API.Enuns;
+using Pessoas.API.Model;
 using Pessoas.API.Services.Interfaces;
 using System.Net.Mime;
 
@@ -44,10 +46,10 @@ public class PessoaController : PessoaBaseController
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(result.Mensagem);
+            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
         }
 
-        return Ok(result);
+        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
     }
 
     /// <summary>
@@ -68,17 +70,17 @@ public class PessoaController : PessoaBaseController
         var pessoa = await _service.GetByIdAsync(request.Id);
 
         if (pessoa == null)
-            return NotFound("Pessoa não encontrada.");
+            return NotFound(APITypedResponse<Result<Pessoa>>.Create(null, false, "Pessoa não encontrada."));
 
         var result = await _service.UpdateAsync(request);
 
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(result.Mensagem);
+            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
         }
 
-        return Ok(result);
+        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
     }
 }
 
@@ -104,7 +106,11 @@ public class PessoaControllerV2 : PessoaBaseController
     /// Adiciona uma nova pessoa. (V2)
     /// </summary>
     /// <param name="request">Dados da nova pessoa. O campo <c>Endereço</c> é obrigatório.</param>
+    [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)
@@ -127,10 +133,10 @@ public class PessoaControllerV2 : PessoaBaseController
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(result.Mensagem);
+            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
         }
 
-        return Ok(result);
+        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
     }
 
     /// <summary>
@@ -151,7 +157,7 @@ public class PessoaControllerV2 : PessoaBaseController
         var pessoa = await _service.GetByIdAsync(request.Id);
 
         if (pessoa == null)
-            return NotFound("Pessoa não encontrada.");
+            return NotFound(APITypedResponse<Result<Pessoa>>.Create(null, false, "Pessoa não encontrada."));
 
         var v1Request = new EditarPessoaRequest
         {
@@ -170,9 +176,9 @@ public class PessoaControllerV2 : PessoaBaseController
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(result.Mensagem);
+            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
         }
 
-        return Ok(result);
+        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
     }
 }

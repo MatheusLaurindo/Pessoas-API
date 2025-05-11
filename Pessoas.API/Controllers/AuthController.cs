@@ -17,19 +17,6 @@ namespace Pessoas.API.Controllers
         private readonly IAuthService _authService = authService;
 
         /// <summary>
-        /// Retorna as permissões do usuário autenticado.
-        /// </summary>
-        /// <returns>Lista de permissões/perfil do usuário.</returns>
-        /// <response code="200">Permissões retornadas com sucesso.</response>
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetPermissoes()
-        {
-            var perfil = _httpContext.GetPermissoes();
-            return Ok(perfil);
-        }
-
-        /// <summary>
         /// Realiza o login do usuário e insere um token JWT no HTTP Cookies
         /// </summary>
         /// <param name="request">Credenciais de login do usuário.</param>

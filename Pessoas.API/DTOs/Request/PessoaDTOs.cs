@@ -5,13 +5,22 @@ namespace Pessoas.API.DTOs.Request
 {
     public sealed record AdicionarPessoaRequest
     {
-        [Required]
+        /// <summary>
+        /// Nome da pessoa. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Nome' é obrigatório")]
         public string Nome { get; init; } = null;
 
-        [Required]
+        /// <summary>
+        /// Data de Nascimento. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Data de Nascimento' é obrigatório")]
         public DateTime DataNascimento { get; init; }
 
-        [Required]
+        /// <summary>
+        /// CPF. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'CPF' é obrigatório")]
         public string Cpf { get; init; } = null;
 
         public string Email { get; init; } = null;
@@ -23,15 +32,27 @@ namespace Pessoas.API.DTOs.Request
 
     public sealed record AdicionarPessoaRequestV2
     {
-        [Required]
+        /// <summary>
+        /// Nome da Pessoa. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Nome' é obrigatório")]
         public string Nome { get; init; } = null;
 
-        [Required]
+        /// <summary>
+        /// Data de Nascimento. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Data de Nascimento' é obrigatório")]
         public DateTime DataNascimento { get; init; }
 
-        [Required]
+        /// <summary>
+        /// CPF. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'CPF' é obrigatório")]
         public string Cpf { get; init; } = null;
 
+        /// <summary>
+        /// Endereço. <b>Obrigatório</b>.
+        /// </summary>
         [Required(ErrorMessage = "O parametro 'Endereço' é obrigatório")]
         public string Endereco { get; init; } = null;
 
@@ -43,16 +64,28 @@ namespace Pessoas.API.DTOs.Request
 
     public sealed record EditarPessoaRequest
     {
-        [Required]
+        /// <summary>
+        /// Id. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Id' é obrigatório")]
         public Guid Id { get; init; } = Guid.Empty;
 
-        [Required]
+        /// <summary>
+        /// Nome da pessoa. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Nome' é obrigatório")]
         public string Nome { get; init; } = null;
 
-        [Required]
+        /// <summary>
+        /// Data de Nascimento. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Data de Nascimento' é obrigatório")]
         public DateTime DataNascimento { get; init; }
 
-        [Required]
+        /// <summary>
+        /// CPF. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'CPF' é obrigatório")]
         public string Cpf { get; init; } = null;
 
         public string Email { get; init; } = null;
@@ -64,18 +97,33 @@ namespace Pessoas.API.DTOs.Request
 
     public sealed record EditarPessoaRequestV2
     {
-        [Required]
+        /// <summary>
+        /// Id. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Id' é obrigatório")]
         public Guid Id { get; init; } = Guid.Empty;
 
-        [Required]
+        /// <summary>
+        /// Nome da Pessoa. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Nome' é obrigatório")]
         public string Nome { get; init; } = null;
 
-        [Required]
+        /// <summary>
+        /// Data de Nascimento. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'Data de Nascimento' é obrigatório")]
         public DateTime DataNascimento { get; init; }
 
-        [Required]
+        /// <summary>
+        /// CPF. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "O parametro 'CPF' é obrigatório")]
         public string Cpf { get; init; } = null;
 
+        /// <summary>
+        /// Endereço. <b>Obrigatório</b>.
+        /// </summary>
         [Required(ErrorMessage = "O parametro 'Endereço' é obrigatório")]
         public string Endereco { get; init; } = null;
 

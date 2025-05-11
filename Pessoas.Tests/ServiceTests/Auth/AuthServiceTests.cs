@@ -11,7 +11,7 @@ public class AuthServiceTests
     private AppDbContext GetDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "AuthServiceTests")
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         var context = new AppDbContext(options);
