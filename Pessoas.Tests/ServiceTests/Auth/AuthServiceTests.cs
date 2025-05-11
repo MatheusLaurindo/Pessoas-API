@@ -33,8 +33,8 @@ public class AuthServiceTests
         return new ConfigurationBuilder().AddInMemoryCollection(config).Build();
     }
 
-    [Fact]
-    public async Task Authenticate_DeveRetornarToken_SeCredenciaisValidas()
+    [Fact(DisplayName = "Authenticate - Deve retonar retornar token se credencais validas")]
+    public async Task Cenario_1()
     {
         // Arrange
         var context = GetDbContext();
@@ -49,8 +49,8 @@ public class AuthServiceTests
         Assert.False(string.IsNullOrEmpty(result.Valor.JWT_TOKEN));
     }
 
-    [Fact]
-    public async Task Authenticate_DeveRetornarFalha_SeUsuarioNaoEncontrado()
+    [Fact(DisplayName = "Authenticate - Deve falhar se usuario não for encontrado")]
+    public async Task Cenario_2()
     {
         // Arrange
         var context = GetDbContext();
@@ -64,8 +64,8 @@ public class AuthServiceTests
         Assert.Null(result.Valor);
     }
 
-    [Fact]
-    public async Task Authenticate_DeveRetornarFalha_SeConfigInvalida()
+    [Fact(DisplayName = "Authenticate - Deve falhar configuracoes não encontradas (issuer, audience e key)")]
+    public async Task Cenario_3()
     {
         // Arrange
         var context = GetDbContext();

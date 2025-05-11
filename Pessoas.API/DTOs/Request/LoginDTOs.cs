@@ -4,9 +4,16 @@ namespace Pessoas.API.DTOs.Request
 {
     public sealed record LoginRequest
     {
-        [Required]
+        /// <summary>
+        /// Email do usuário. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "Email é obrigatório")]
         public string Email { get; init; } = null;
-        [Required]
+
+        /// <summary>
+        /// Senha do usuário. <b>Obrigatório</b>.
+        /// </summary>
+        [Required(ErrorMessage = "Senha é obrigatório")]
         public string Senha { get; init; } = null;
     }
 }

@@ -49,6 +49,13 @@ namespace Pessoas.API.Repositories
 
         public async Task<Pessoa> UpdateAsync(Pessoa pessoa)
         {
+            var pessoaCpf = await _contexto.Pessoas
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Cpf == pessoa.Cpf);
+
+            if (pessoaCpf != null && pessoaCpf.Id != pessoa.Id)
+                throw new DominioInvalidoException("Este CPF já está cadastrado para outra pessoa.");
+
             pessoa.SetDataAtualizacao();
 
             _contexto.Pessoas.Update(pessoa);

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Pessoas.API.Common;
 using Pessoas.API.DTOs.Request;
 using Pessoas.API.Services.Interfaces;
+using Pessoas.API.Utils;
 
 namespace Pessoas.API.Controllers
 {
@@ -11,10 +13,11 @@ namespace Pessoas.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/v1/auth")]
-    public class AuthController(IHttpContextAcessorService httpContext, IAuthService authService) : ControllerBase
+    public class AuthController(IHttpContextAcessorService httpContext, IAuthService authService, ILogger<AuthController> logger) : ControllerBase
     {
         private readonly IHttpContextAcessorService _httpContext = httpContext;
         private readonly IAuthService _authService = authService;
+        private readonly ILogger<AuthController> _logger = logger;
 
         /// <summary>
         /// Realiza o login do usuário e insere um token JWT no HTTP Cookies
@@ -30,12 +33,20 @@ namespace Pessoas.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
+            {
+                _logger.LogError("LoginRequest inválido: {ModelState}", ModelState);
+
                 return BadRequest(ModelState);
+            }
 
             var result = await _authService.Authenticate(request.Email, request.Senha);
 
             if (!result.FoiSucesso)
-                return BadRequest(result.Mensagem);
+            {
+                _logger.LogError("Falha ao autenticar usuário: {Mensagem}", result.Mensagem);
+
+                return BadRequest(APITypedResponse<JwtToken>.Create(null, false, result.Mensagem));
+            }
 
             var cookieOptions = new CookieOptions
             {
@@ -47,7 +58,9 @@ namespace Pessoas.API.Controllers
 
             HttpContext.Response.Cookies.Append("jwt_token", result.Valor.JWT_TOKEN, cookieOptions);
 
-            return Ok();
+            _logger.LogInformation("Usuário autenticado com sucesso: {Email}", request.Email);
+
+            return Ok(APITypedResponse<JwtToken>.Create(null, true, result.Mensagem));
         }
     }
 }
