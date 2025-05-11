@@ -13,9 +13,8 @@ namespace Pessoas.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/v1/auth")]
-    public class AuthController(IHttpContextAcessorService httpContext, IAuthService authService, ILogger<AuthController> logger) : ControllerBase
+    public class AuthController(IAuthService authService, ILogger<AuthController> logger) : ControllerBase
     {
-        private readonly IHttpContextAcessorService _httpContext = httpContext;
         private readonly IAuthService _authService = authService;
         private readonly ILogger<AuthController> _logger = logger;
 
@@ -28,8 +27,6 @@ namespace Pessoas.API.Controllers
         /// <response code="400">Credenciais inválidas ou erro de validação.</response>
         [AllowAnonymous]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
