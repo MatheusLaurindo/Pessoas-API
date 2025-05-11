@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Pessoas.API.Common;
+﻿using Pessoas.API.Common;
 using Pessoas.API.DTOs.Request;
 using Pessoas.API.DTOs.Response;
 using Pessoas.API.Exceptions;
@@ -108,7 +107,7 @@ namespace Pessoas.API.Services
             }
             catch (Exception ex)
             {
-                return Result<Guid>.Falha($"Erro ao remover pessoa: {ex.Message}");
+                return Result<Guid>.Falha($"Erro ao remover dados: {ex.Message}");
             }
         }
     }

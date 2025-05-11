@@ -13,7 +13,7 @@ public class PessoaServiceTests
     private AppDbContext GetDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-           .UseInMemoryDatabase(databaseName: "PessoaServiceTests")
+           .UseInMemoryDatabase(Guid.NewGuid().ToString())
            .Options;
 
         var context = new AppDbContext(options);
@@ -37,7 +37,7 @@ public class PessoaServiceTests
 
         // Assert
         Assert.NotNull(resultado);
-        Assert.Equal(16, resultado.Count());
+        Assert.Equal(15, resultado.Count());
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class PessoaServiceTests
             Nome = "João",
             Email = "joao@email.com",
             DataNascimento = DateTime.Today.AddYears(-25),
-            Cpf = "123.456.789-00",
+            Cpf = "111.111.111-11",
             Sexo = Sexo.Masculino,
             Nacionalidade = Nacionalidade.Brasileira,
             Naturalidade = "RJ"
@@ -126,6 +126,32 @@ public class PessoaServiceTests
         // Assert
         Assert.True(resultado.FoiSucesso);
         Assert.NotEqual(Guid.Empty, resultado.Valor.Id);
+    }
+
+    [Fact]
+    public async Task AddAsync_DeveFalhar_SeCpfJaExistir()
+    {
+        // Arrange
+        var contexto = GetDbContext();
+        var repo = new PessoaRepository(contexto);
+        var service = new PessoaService(repo);
+
+        var request = new AdicionarPessoaRequest
+        {
+            Nome = "João",
+            Email = "joao@email.com",
+            DataNascimento = DateTime.Today.AddYears(-25),
+            Cpf = "123.456.789-01",
+            Sexo = Sexo.Masculino,
+            Nacionalidade = Nacionalidade.Brasileira,
+            Naturalidade = "RJ"
+        };
+
+        // Act
+        var resultado = await service.AddAsync(request);
+
+        // Assert
+        Assert.False(resultado.FoiSucesso);
     }
 
     [Fact]

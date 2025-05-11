@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pessoas.API.Atributos;
+using Pessoas.API.Common;
 using Pessoas.API.DTOs.Request;
+using Pessoas.API.DTOs.Response;
 using Pessoas.API.Enuns;
+using Pessoas.API.Model;
 using Pessoas.API.Services.Interfaces;
 using System.Net.Mime;
 
@@ -21,7 +24,7 @@ namespace Pessoas.API.Controllers
         {
             var pessoas = await _service.GetAllAsync();
 
-            return Ok(pessoas);
+            return Ok(APITypedResponse<IEnumerable<GetPessoaResp>>.Create(pessoas, true, ""));
         }
 
         /// <summary>
@@ -36,7 +39,7 @@ namespace Pessoas.API.Controllers
         {
             var pessoas = await _service.GetAllPaginatedAsync(pagina, linhasPorPagina);
 
-            return Ok(pessoas);
+            return Ok(APITypedResponse<IEnumerable<GetPessoaResp>>.Create(pessoas, true, ""));
         }
 
         /// <summary>
@@ -52,9 +55,9 @@ namespace Pessoas.API.Controllers
             var pessoa = await _service.GetByIdAsync(id);
 
             if (pessoa == null)
-                return NotFound("Pessoa não encontrada.");
+                return NotFound(APITypedResponse<GetPessoaResp>.Create(pessoa, false, "Pessoa não encontrada."));
 
-            return Ok(pessoa);
+            return Ok(APITypedResponse<GetPessoaResp>.Create(pessoa, true, ""));
         }
 
         /// <summary>
@@ -71,17 +74,17 @@ namespace Pessoas.API.Controllers
             var pessoa = await _service.GetByIdAsync(id);
 
             if (pessoa == null)
-                return NotFound("Pessoa não encontrada.");
+                return NotFound(APITypedResponse<Guid>.Create(id, false, "Pessoa não encontrada."));
 
             var result = await _service.DeleteAsync(id);
 
             if (!result.FoiSucesso)
             {
                 ModelState.AddModelError("", result.Mensagem);
-                return BadRequest(result.Mensagem);
+                return BadRequest(APITypedResponse<Guid>.Create(id, false, result.Mensagem));
             }
 
-            return Ok(result);
+            return Ok(APITypedResponse<Guid>.Create(id, true, result.Mensagem));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pessoas.API.Common;
+using Pessoas.API.Exceptions;
 using Pessoas.API.Infra;
 using Pessoas.API.Model;
 using Pessoas.API.Repositories.Interfaces;
@@ -32,6 +33,13 @@ namespace Pessoas.API.Repositories
 
         public async Task<Pessoa> AddAsync(Pessoa pessoa)
         {
+            var cpfExiste = await _contexto.Pessoas
+                .AsNoTracking()
+                .AnyAsync(x => x.Cpf == pessoa.Cpf);
+
+            if (cpfExiste)
+                throw new DominioInvalidoException("Este CPF já está cadastrado para outra pessoa.");
+
             _contexto.Pessoas.Add(pessoa);
 
             await _contexto.SaveChangesAsync();
