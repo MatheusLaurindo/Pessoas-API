@@ -19,18 +19,18 @@ public class PessoaServiceTests
         var context = new AppDbContext(options);
         context.Database.EnsureCreated();
 
-        Seeding.SeedPessoas(context);
-
         return context;
     }
 
-    [Fact]
-    public async Task GetAllAsync_DeveRetornarTodasAsPessoas()
+    [Fact(DisplayName = "GetAllAsync - Deve retornar todas as pessoas")]
+    public async Task Cenario_1()
     {
         // Arrange
         var contexto = GetDbContext();
         var repo = new PessoaRepository(contexto);
         var service = new PessoaService(repo);
+
+        Seeding.SeedPessoas(contexto);
 
         // Act
         var resultado = await service.GetAllAsync();
@@ -40,8 +40,8 @@ public class PessoaServiceTests
         Assert.Equal(15, resultado.Count());
     }
 
-    [Fact]
-    public async Task GetByIdAsync_DeveRetornarPessoa_SeIdValido()
+    [Fact(DisplayName = "GetByIdAsync - Deve retornar a pessoa com id válido")]
+    public async Task Cenario_2()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -70,8 +70,8 @@ public class PessoaServiceTests
         Assert.Equal(pessoa.Email, resultado.Email);
     }
 
-    [Fact]
-    public async Task GetByIdAsync_DeveRetornarNulo_SeIdInvalido()
+    [Fact(DisplayName = "GetByIdAsync - Deve retornar nulo se id inválido")]
+    public async Task Cenario_3()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -85,13 +85,15 @@ public class PessoaServiceTests
         Assert.Null(resultado);
     }
 
-    [Fact]
-    public async Task GetAllPaginatedAsync_DeveRetornarPessoasPaginadas()
+    [Fact(DisplayName = "GetAllPaginatedAsync - Deve retornar pessoas de forma paginada")]
+    public async Task Cenario_4()
     {
         // Arrange
         var contexto = GetDbContext();
         var repo = new PessoaRepository(contexto);
         var service = new PessoaService(repo);
+
+        Seeding.SeedPessoas(contexto);
 
         // Act
         var resultado = await service.GetAllPaginatedAsync(1, 5);
@@ -101,8 +103,8 @@ public class PessoaServiceTests
         Assert.Equal(5, resultado.Count());
     }
 
-    [Fact]
-    public async Task AddAsync_DeveAdicionarPessoaComSucesso()
+    [Fact(DisplayName = "AddAsync - Deve adicionar pessoa com sucesso")]
+    public async Task Cenario_5()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -128,13 +130,15 @@ public class PessoaServiceTests
         Assert.NotEqual(Guid.Empty, resultado.Valor.Id);
     }
 
-    [Fact]
-    public async Task AddAsync_DeveFalhar_SeCpfJaExistir()
+    [Fact(DisplayName = "AddAsync - Deve falhar se cpf ja existir")]
+    public async Task Cenario_6()
     {
         // Arrange
         var contexto = GetDbContext();
         var repo = new PessoaRepository(contexto);
         var service = new PessoaService(repo);
+
+        Seeding.SeedPessoas(contexto);
 
         var request = new AdicionarPessoaRequest
         {
@@ -154,8 +158,8 @@ public class PessoaServiceTests
         Assert.False(resultado.FoiSucesso);
     }
 
-    [Fact]
-    public async Task AddAsync_DeveFalhar_SeCpfInvalido()
+    [Fact(DisplayName = "AddAsync - Deve falhar se cpf for inválido")]
+    public async Task Cenario_7()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -167,7 +171,7 @@ public class PessoaServiceTests
             Nome = "João",
             Email = "joao@email.com",
             DataNascimento = DateTime.Today.AddYears(-25),
-            Cpf = "123123123123",
+            Cpf = "123.123.123.222.1",
             Sexo = Sexo.Masculino,
             Nacionalidade = Nacionalidade.Brasileira,
             Naturalidade = "RJ"
@@ -181,8 +185,8 @@ public class PessoaServiceTests
         Assert.Null(resultado.Valor);
     }
 
-    [Fact]
-    public async Task AddAsync_DeveFalhar_SeEmailInvalido()
+    [Fact(DisplayName = "AddAsync - Deve falhar se email inválido")]
+    public async Task Cenario_8()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -208,8 +212,8 @@ public class PessoaServiceTests
         Assert.Null(resultado.Valor);
     }
 
-    [Fact]
-    public async Task AddAsync_DeveFalhar_SeNomeInvalido()
+    [Fact(DisplayName = "AddAsync - Deve falhar se nome inválido")]
+    public async Task Cenario_9()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -235,8 +239,8 @@ public class PessoaServiceTests
         Assert.Null(resultado.Valor);
     }
 
-    [Fact]
-    public async Task AddAsync_DeveFalhar_SeDataNascimentoInvalida()
+    [Fact(DisplayName = "AddAsync - Deve falhar se data de nascimento inválida")]
+    public async Task Cenario_10()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -262,8 +266,8 @@ public class PessoaServiceTests
         Assert.Null(resultado.Valor);
     }
 
-    [Fact]
-    public async Task UpdateAsync_DeveAtualizarPessoaComSucesso()
+    [Fact(DisplayName = "UpdateAsync - Deve atualizar dados da pessoa com sucesso")]
+    public async Task Cenario_11()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -306,8 +310,8 @@ public class PessoaServiceTests
         Assert.Equal(request.Endereco, resultado.Valor.Endereco);
     }
 
-    [Fact]
-    public async Task UpdateAsync_DeveFalharEdicao_SeEmailInvalido()
+    [Fact(DisplayName = "UpdateAsync - Deve falhar ao atualizar dados da pessoa com email invalido")]
+    public async Task Cenario_12()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -348,8 +352,8 @@ public class PessoaServiceTests
         Assert.Null(resultado.Valor);
     }
 
-    [Fact]
-    public async Task UpdateAsync_DeveFalharEdicao_SeNomeInvalido()
+    [Fact(DisplayName = "UpdateAsync - Deve falhar ao atualizar dados da pessoa com nome invalido")]
+    public async Task Cenario_13()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -390,8 +394,50 @@ public class PessoaServiceTests
         Assert.Null(resultado.Valor);
     }
 
-    [Fact]
-    public async Task DeleteAsync_DeveRemoverPessoaComSucesso()
+    [Fact(DisplayName = "UpdateAsync - Deve falhar ao atualizar dados da pessoa com cpf invalido")]
+    public async Task Cenario_14()
+    {
+        // Arrange
+        var contexto = GetDbContext();
+        var repo = new PessoaRepository(contexto);
+        var service = new PessoaService(repo);
+
+        var pessoa = Pessoas.API.Model.Pessoa.Create(
+            "Ana",
+            "ana@email.com",
+            DateTime.Today.AddYears(-28),
+            "111.333.555-66",
+            Sexo.Feminino,
+            Nacionalidade.Brasileira,
+            "BA",
+            "Rua D").Valor;
+
+        contexto.Pessoas.Add(pessoa);
+        await contexto.SaveChangesAsync();
+
+        var request = new EditarPessoaRequest
+        {
+            Id = pessoa.Id,
+            Nome = pessoa.Nome,
+            Email = pessoa.Email,
+            DataNascimento = pessoa.DataNascimento,
+            Cpf = "12341342.245245-2534234",
+            Sexo = pessoa.Sexo,
+            Nacionalidade = pessoa.Nacionalidade,
+            Naturalidade = pessoa.Naturalidade,
+            Endereco = pessoa.Endereco
+        };
+
+        // Act
+        var resultado = await service.UpdateAsync(request);
+
+        // Assert
+        Assert.False(resultado.FoiSucesso);
+        Assert.Null(resultado.Valor);
+    }
+
+    [Fact(DisplayName = "DeleteAsync - Deve deletar pessoa com sucesso")]
+    public async Task Cenario_15()
     {
         // Arrange
         var contexto = GetDbContext();
@@ -419,8 +465,8 @@ public class PessoaServiceTests
         Assert.Equal(pessoa.Id, resultado.Valor);
     }
 
-    [Fact]
-    public async Task DeleteAsync_DeveFalharRemocao_SeIdInvalido()
+    [Fact(DisplayName = "DeleteAsync - Deve falhar ao deletar pessoa com id inválido")]
+    public async Task Cenario_16()
     {
         // Arrange
         var contexto = GetDbContext();

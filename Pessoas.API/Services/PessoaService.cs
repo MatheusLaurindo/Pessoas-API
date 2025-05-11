@@ -41,11 +41,13 @@ namespace Pessoas.API.Services
         {
             try
             {
+                var cpf = pessoa.Cpf.Replace(".", "").Replace("-", "");
+
                 var novaPessoa = Pessoa.Create(
                     pessoa.Nome,
                     pessoa.Email,
                     pessoa.DataNascimento,
-                    pessoa.Cpf,
+                    cpf,
                     pessoa.Sexo,
                     pessoa.Nacionalidade,
                     pessoa.Naturalidade,
@@ -60,7 +62,7 @@ namespace Pessoas.API.Services
             }
             catch (DominioInvalidoException ex)
             {
-                return Result<Pessoa>.Falha($"Erro ao adicionar dados: {ex.Message}");
+                return Result<Pessoa>.Falha(ex.Message);
             }
         }
 
@@ -88,7 +90,7 @@ namespace Pessoas.API.Services
             }
             catch (DominioInvalidoException ex)
             {
-                return Result<Pessoa>.Falha($"Erro ao editar dados: {ex.Message}");
+                return Result<Pessoa>.Falha(ex.Message);
             }
         }
 

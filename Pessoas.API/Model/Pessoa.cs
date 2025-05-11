@@ -72,10 +72,12 @@ namespace Pessoas.API.Model
 
         public void SetCpf(string cpf)
         {
+            cpf = cpf.Replace(".", "").Replace("-", "");
+
             if (string.IsNullOrWhiteSpace(cpf))
                 throw new DominioInvalidoException(nameof(cpf));
 
-            if (cpf.Length < 14)
+            if (cpf.Length != 11)
                 throw new DominioInvalidoException(nameof(cpf));
 
             Cpf = cpf;

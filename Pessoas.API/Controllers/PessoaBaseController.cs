@@ -10,9 +10,10 @@ using System.Net.Mime;
 
 namespace Pessoas.API.Controllers
 {
-    public abstract class PessoaBaseController(IPessoaService service) : ControllerBase
+    public abstract class PessoaBaseController(IPessoaService service, ILogger<PessoaBaseController> logger) : ControllerBase
     {
         private readonly IPessoaService _service = service;
+        private readonly ILogger<PessoaBaseController> _logger = logger;
 
         /// <summary>
         /// Retorna todas as pessoas.
@@ -74,15 +75,24 @@ namespace Pessoas.API.Controllers
             var pessoa = await _service.GetByIdAsync(id);
 
             if (pessoa == null)
+            {
+                _logger.LogWarning("Pessoa não encontrada: {@Id}", id);
+
                 return NotFound(APITypedResponse<Guid>.Create(id, false, "Pessoa não encontrada."));
+            }
 
             var result = await _service.DeleteAsync(id);
 
             if (!result.FoiSucesso)
             {
                 ModelState.AddModelError("", result.Mensagem);
+
+                _logger.LogWarning("Erro ao remover pessoa: {@Mensagem}", result.Mensagem);
+
                 return BadRequest(APITypedResponse<Guid>.Create(id, false, result.Mensagem));
             }
+
+            _logger.LogInformation("Pessoa removida com sucesso: {@Id}", id);
 
             return Ok(APITypedResponse<Guid>.Create(id, true, result.Mensagem));
         }

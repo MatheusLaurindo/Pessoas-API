@@ -21,10 +21,12 @@ namespace Pessoas.API.Controllers;
 public class PessoaController : PessoaBaseController
 {
     private readonly IPessoaService _service;
+    private readonly ILogger<PessoaBaseController> _logger;
 
-    public PessoaController(IPessoaService service) : base(service)
+    public PessoaController(IPessoaService service, ILogger<PessoaBaseController> logger) : base(service, logger)
     {
         _service = service;
+        _logger = logger;
     }
 
     /// <summary>
@@ -39,17 +41,26 @@ public class PessoaController : PessoaBaseController
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequest request)
     {
         if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Modelo inválido: {@ModelState}", ModelState);
+
             return BadRequest(ModelState);
+        }
 
         var result = await _service.AddAsync(request);
 
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
+
+            _logger.LogWarning("Erro ao adicionar pessoa: {@Mensagem}", result.Mensagem);
+
+            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
         }
 
-        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
+        _logger.LogInformation("Pessoa adicionada com sucesso: {@Pessoa}", result.Valor);
+
+        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
     }
 
     /// <summary>
@@ -65,22 +76,35 @@ public class PessoaController : PessoaBaseController
     public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequest request)
     {
         if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Modelo inválido: {@ModelState}", ModelState);
+
             return BadRequest(ModelState);
+        }
 
         var pessoa = await _service.GetByIdAsync(request.Id);
 
         if (pessoa == null)
-            return NotFound(APITypedResponse<Result<Pessoa>>.Create(null, false, "Pessoa não encontrada."));
+        {
+            _logger.LogWarning("Pessoa não encontrada: {@Id}", request.Id);
+
+            return NotFound(APITypedResponse<Pessoa>.Create(null, false, "Pessoa não encontrada."));
+        }
 
         var result = await _service.UpdateAsync(request);
 
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
+
+            _logger.LogWarning("Erro ao atualizar pessoa: {@Mensagem}", result.Mensagem);
+
+            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
         }
 
-        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
+        _logger.LogInformation("Pessoa atualizada com sucesso: {@Pessoa}", result.Valor);
+
+        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
     }
 }
 
@@ -95,10 +119,12 @@ public class PessoaController : PessoaBaseController
 public class PessoaControllerV2 : PessoaBaseController
 {
     private readonly IPessoaService _service;
+    private readonly ILogger<PessoaBaseController> _logger;
 
-    public PessoaControllerV2(IPessoaService service) : base(service)
+    public PessoaControllerV2(IPessoaService service, ILogger<PessoaBaseController> logger) : base(service, logger)
     {
         _service = service;
+        _logger = logger;
     }
 
 
@@ -114,7 +140,11 @@ public class PessoaControllerV2 : PessoaBaseController
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Modelo inválido: {@ModelState}", ModelState);
+
             return BadRequest(ModelState);
+        }
 
         var v1Request = new AdicionarPessoaRequest
         {
@@ -133,10 +163,15 @@ public class PessoaControllerV2 : PessoaBaseController
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
+
+            _logger.LogWarning("Erro ao adicionar pessoa: {@Mensagem}", result.Mensagem);
+
+            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
         }
 
-        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
+        _logger.LogInformation("Pessoa adicionada com sucesso: {@Pessoa}", result.Valor);
+
+        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
     }
 
     /// <summary>
@@ -152,12 +187,20 @@ public class PessoaControllerV2 : PessoaBaseController
     public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Modelo inválido: {@ModelState}", ModelState);
+
             return BadRequest(ModelState);
+        }
 
         var pessoa = await _service.GetByIdAsync(request.Id);
 
         if (pessoa == null)
-            return NotFound(APITypedResponse<Result<Pessoa>>.Create(null, false, "Pessoa não encontrada."));
+        {
+            _logger.LogWarning("Pessoa não encontrada: {@Id}", request.Id);
+
+            return NotFound(APITypedResponse<Pessoa>.Create(null, false, "Pessoa não encontrada."));
+        }
 
         var v1Request = new EditarPessoaRequest
         {
@@ -176,9 +219,14 @@ public class PessoaControllerV2 : PessoaBaseController
         if (!result.FoiSucesso)
         {
             ModelState.AddModelError("", result.Mensagem);
-            return BadRequest(APITypedResponse<Result<Pessoa>>.Create(result, false, result.Mensagem));
+
+            _logger.LogWarning("Erro ao atualizar pessoa: {@Mensagem}", result.Mensagem);
+
+            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
         }
 
-        return Ok(APITypedResponse<Result<Pessoa>>.Create(result, true, result.Mensagem));
+        _logger.LogInformation("Pessoa atualizada com sucesso: {@Pessoa}", result.Valor);
+
+        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
     }
 }
