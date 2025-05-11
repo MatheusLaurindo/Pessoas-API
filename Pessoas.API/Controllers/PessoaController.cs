@@ -36,8 +36,7 @@ public class PessoaController : PessoaBaseController
     [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequest request)
     {
         if (!ModelState.IsValid)
@@ -70,9 +69,7 @@ public class PessoaController : PessoaBaseController
     [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequest request)
     {
         if (!ModelState.IsValid)
@@ -135,8 +132,7 @@ public class PessoaControllerV2 : PessoaBaseController
     [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)
@@ -181,9 +177,7 @@ public class PessoaControllerV2 : PessoaBaseController
     [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)

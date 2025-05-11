@@ -14,7 +14,6 @@ namespace Pessoas.API.Infra.Installers
             services.AddScoped<IAuthService, AuthService>();
 
             services.AddHttpContextAccessor();
-            services.AddScoped<IHttpContextAcessorService, HttpContextAcessorService>();
         }
     }
 }
