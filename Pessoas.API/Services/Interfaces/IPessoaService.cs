@@ -10,8 +10,8 @@ namespace Pessoas.API.Services.Interfaces
         Task<IEnumerable<GetPessoaResp>> GetAllAsync();
         Task<IEnumerable<GetPessoaResp>> GetAllPaginatedAsync(int pagina, int linhasPorPagina);
         Task<GetPessoaResp> GetByIdAsync(Guid id);
-        Task<Result<Pessoa>> AddAsync(AdicionarPessoaRequest pessoa);
-        Task<Result<Pessoa>> UpdateAsync(EditarPessoaRequest pessoa);
+        Task<Result<GetPessoaResp>> AddAsync(AdicionarPessoaRequest pessoa);
+        Task<Result<GetPessoaResp>> UpdateAsync(EditarPessoaRequest pessoa);
         Task<Result<Guid>> DeleteAsync(Guid id);
     }
 }

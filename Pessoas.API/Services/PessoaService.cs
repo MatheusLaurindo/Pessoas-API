@@ -37,7 +37,7 @@ namespace Pessoas.API.Services
             return pessoa.ToDto();
         }
 
-        public async Task<Result<Pessoa>> AddAsync(AdicionarPessoaRequest pessoa)
+        public async Task<Result<GetPessoaResp>> AddAsync(AdicionarPessoaRequest pessoa)
         {
             try
             {
@@ -54,26 +54,26 @@ namespace Pessoas.API.Services
                     pessoa.Endereco);
 
                 if (!novaPessoa.FoiSucesso)
-                    return Result<Pessoa>.Falha(novaPessoa.Mensagem);
+                    return Result<GetPessoaResp>.Falha(novaPessoa.Mensagem);
 
                 var result = await _repository.AddAsync(novaPessoa.Valor);
 
-                return Result<Pessoa>.Sucesso(result);
+                return Result<GetPessoaResp>.Sucesso(result.ToDto());
             }
             catch (DominioInvalidoException ex)
             {
-                return Result<Pessoa>.Falha(ex.Message);
+                return Result<GetPessoaResp>.Falha(ex.Message);
             }
         }
 
-        public async Task<Result<Pessoa>> UpdateAsync(EditarPessoaRequest pessoa)
+        public async Task<Result<GetPessoaResp>> UpdateAsync(EditarPessoaRequest pessoa)
         {
             try
             {
                 var pessoaExistente = await _repository.GetByIdAsync(pessoa.Id);
 
                 if (pessoaExistente == null)
-                    return Result<Pessoa>.Falha("Pessoa não encontrada");
+                    return Result<GetPessoaResp>.Falha("Pessoa não encontrada");
 
                 pessoaExistente.SetNome(pessoa.Nome);
                 pessoaExistente.SetEmail(pessoa.Email);
@@ -86,11 +86,11 @@ namespace Pessoas.API.Services
 
                 var result = await _repository.UpdateAsync(pessoaExistente);
 
-                return Result<Pessoa>.Sucesso(result);
+                return Result<GetPessoaResp>.Sucesso(result.ToDto());
             }
             catch (DominioInvalidoException ex)
             {
-                return Result<Pessoa>.Falha(ex.Message);
+                return Result<GetPessoaResp>.Falha(ex.Message);
             }
         }
 

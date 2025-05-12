@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pessoas.API.Atributos;
 using Pessoas.API.Common;
 using Pessoas.API.DTOs.Request;
+using Pessoas.API.DTOs.Response;
 using Pessoas.API.Enuns;
 using Pessoas.API.Model;
 using Pessoas.API.Services.Interfaces;
@@ -36,7 +37,7 @@ public class PessoaController : PessoaBaseController
     [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(APITypedResponse<GetPessoaResp>), StatusCodes.Status200OK)]
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequest request)
     {
         if (!ModelState.IsValid)
@@ -54,12 +55,12 @@ public class PessoaController : PessoaBaseController
 
             _logger.LogWarning("Erro ao adicionar pessoa: {@Mensagem}", result.Mensagem);
 
-            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
+            return BadRequest(APITypedResponse<GetPessoaResp>.Create(null, false, result.Mensagem));
         }
 
         _logger.LogInformation("Pessoa adicionada com sucesso: {@Pessoa}", result.Valor);
 
-        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
+        return Ok(APITypedResponse<GetPessoaResp>.Create(result.Valor, true, result.Mensagem));
     }
 
     /// <summary>
@@ -69,7 +70,7 @@ public class PessoaController : PessoaBaseController
     [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(APITypedResponse<GetPessoaResp>), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequest request)
     {
         if (!ModelState.IsValid)
@@ -85,7 +86,7 @@ public class PessoaController : PessoaBaseController
         {
             _logger.LogWarning("Pessoa não encontrada: {@Id}", request.Id);
 
-            return NotFound(APITypedResponse<Pessoa>.Create(null, false, "Pessoa não encontrada."));
+            return NotFound(APITypedResponse<GetPessoaResp>.Create(null, false, "Pessoa não encontrada."));
         }
 
         var result = await _service.UpdateAsync(request);
@@ -96,12 +97,12 @@ public class PessoaController : PessoaBaseController
 
             _logger.LogWarning("Erro ao atualizar pessoa: {@Mensagem}", result.Mensagem);
 
-            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
+            return BadRequest(APITypedResponse<GetPessoaResp>.Create(null, false, result.Mensagem));
         }
 
         _logger.LogInformation("Pessoa atualizada com sucesso: {@Pessoa}", result.Valor);
 
-        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
+        return Ok(APITypedResponse<GetPessoaResp>.Create(result.Valor, true, result.Mensagem));
     }
 }
 
@@ -132,7 +133,7 @@ public class PessoaControllerV2 : PessoaBaseController
     [AppAuthorize(Permissao.Adicionar_Pessoa)]
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(APITypedResponse<GetPessoaResp>), StatusCodes.Status200OK)]
     public async Task<IActionResult> AddAsync([FromBody] AdicionarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)
@@ -162,12 +163,12 @@ public class PessoaControllerV2 : PessoaBaseController
 
             _logger.LogWarning("Erro ao adicionar pessoa: {@Mensagem}", result.Mensagem);
 
-            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
+            return BadRequest(APITypedResponse<GetPessoaResp>.Create(null, false, result.Mensagem));
         }
 
         _logger.LogInformation("Pessoa adicionada com sucesso: {@Pessoa}", result.Valor);
 
-        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
+        return Ok(APITypedResponse<GetPessoaResp>.Create(result.Valor, true, result.Mensagem));
     }
 
     /// <summary>
@@ -177,7 +178,7 @@ public class PessoaControllerV2 : PessoaBaseController
     [AppAuthorize(Permissao.Editar_Pessoa)]
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(APITypedResponse<Pessoa>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(APITypedResponse<GetPessoaResp>), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateAsync([FromBody] EditarPessoaRequestV2 request)
     {
         if (!ModelState.IsValid)
@@ -193,7 +194,7 @@ public class PessoaControllerV2 : PessoaBaseController
         {
             _logger.LogWarning("Pessoa não encontrada: {@Id}", request.Id);
 
-            return NotFound(APITypedResponse<Pessoa>.Create(null, false, "Pessoa não encontrada."));
+            return NotFound(APITypedResponse<GetPessoaResp>.Create(null, false, "Pessoa não encontrada."));
         }
 
         var v1Request = new EditarPessoaRequest
@@ -216,11 +217,11 @@ public class PessoaControllerV2 : PessoaBaseController
 
             _logger.LogWarning("Erro ao atualizar pessoa: {@Mensagem}", result.Mensagem);
 
-            return BadRequest(APITypedResponse<Pessoa>.Create(null, false, result.Mensagem));
+            return BadRequest(APITypedResponse<GetPessoaResp>.Create(null, false, result.Mensagem));
         }
 
         _logger.LogInformation("Pessoa atualizada com sucesso: {@Pessoa}", result.Valor);
 
-        return Ok(APITypedResponse<Pessoa>.Create(result.Valor, true, result.Mensagem));
+        return Ok(APITypedResponse<GetPessoaResp>.Create(result.Valor, true, result.Mensagem));
     }
 }
