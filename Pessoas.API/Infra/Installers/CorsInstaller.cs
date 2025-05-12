@@ -8,7 +8,7 @@
             {
                 options.AddPolicy("AllowSpecificOrigin", builder =>
                 {
-                    builder.WithOrigins("https://localhost:3000", "https://meu-site.com") // substituir pela url do frontend
+                    builder.WithOrigins("https://localhost:3000", "https://happy-rock-09827ea10.6.azurestaticapps.net")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
