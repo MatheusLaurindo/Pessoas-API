@@ -50,7 +50,8 @@ namespace Pessoas.API.Controllers
                 HttpOnly = true,
                 IsEssential = true,
                 Expires = DateTime.UtcNow.AddHours(8),
-                SameSite = SameSiteMode.Strict
+                Secure = true,                 
+                SameSite = SameSiteMode.None  
             };
 
             HttpContext.Response.Cookies.Append("jwt_token", result.Valor.JWT_TOKEN, cookieOptions);
